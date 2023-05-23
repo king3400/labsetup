@@ -1,0 +1,54 @@
+MYSQL SETUP ------******
+
+system setup 
+hostname : mysql.localdomain.com
+IP: 192.168.83.17
+primary user root
+
+installing MYSQL on CENTOS7
+
+>curl -sSLO https://dev.mysql.com/get/mysql80-community-release-el7-7.noarch.rpm
+
+>md5sum mysql80-community-release-el7-7.noarch.rpm
+
+>sudo rpm -ivh mysql80-community-release-el7-7.noarch.rpm
+
+>sudo yum install mysql-server -y
+
+>sudo systemctl start mysqld
+
+>sudo systemctl status mysqld
+
+>sudo grep 'temporary password' /var/log/mysqld.log
+
+>mysqladmin -u root -p  ### setting up mysql like user and answer all queestions and get password from previous command 
+
+>mysqladmin -u root -p version ### use the recently setup password
+
+
+>firewall-cmd --zone=public --add-port=3306/tcp --permanent
+
+>firewall-cmd --reload
+
+
+>vi /etc/my.cnf  ### add the line in this file "bind-address = 0.0.0.0" --without the quotes
+
+>sudo mysql -u root -p ### use the previously setup password 
+
+#run these command we will need a new password
+    mysql> GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
+    Query OK, 0 rows affected (0.00 sec)
+
+    mysql> FLUSH PRIVILEGES;
+    Query OK, 0 rows affected (0.01 sec)
+
+    mysql> exit
+    Bye
+
+------------------------------------
+
+*********** now install workbench on windows host/ client/ laptop *************
+
+------------------------------------
+
+********* and connect to the databse server *************
