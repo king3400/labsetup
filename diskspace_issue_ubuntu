@@ -1,0 +1,48 @@
+example 200GB LVM utilising half the disk, which is the default when you install ubuntu server for example.
+
+# vgdisplay
+
+VG Size               <199.00 GiB
+Alloc PE / Size       25472 / 99.50 Gib
+Free  PE / Size       25471 / <99.50 GiB
+
+
+# lsblk
+
+└─sda3                      8:3    0   199G  0 part
+  └─ubuntu--vg-ubuntu--lv 253:0    0  99.5G  0 lvm
+Find the path name of your LVM:
+
+# lvdisplay
+Mine is /dev/ubuntu-vg/ubuntu-lv
+
+You can allocate all free space to the existing space with this: Obviosuly you should have a backup of your data before doing this.
+
+# lvextend -l +100%FREE /dev/ubuntu-vg/ubuntu-lv
+After this completes check "vgdisplay" to verify the space has been allocated.
+
+This is what it looks like after:
+
+# vgdisplay
+
+  VG Size               <199.00 GiB
+  Alloc PE / Size       50943 / <199.00 GiB
+  Free  PE / Size       0 / 0
+The file system is still going to be the same size though, it needs to be extended too. Mine is EXT4.
+
+Inspect:
+
+# df -hT
+
+Filesystem                        Type   Size  Used Avail Use%
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4    98G  5.1G   88G   6%
+Run resize2fs to expand the ext4 filesystem to fill the VG
+
+# resize2fs /dev/ubuntu-vg/ubuntu-lv
+This is what is looks like after:
+
+# df -hT
+
+Filesystem                        Type   Size  Used Avail Use%
+/dev/mapper/ubuntu--vg-ubuntu--lv ext4   196G  5.1G  182G   3% /
+My 200GB LVM is now completely utilised.
